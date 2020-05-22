@@ -1,0 +1,267 @@
+<template>
+  <div class="sidebar">
+    <template v-if="!showColorPicker">
+      <div class="sidebar-header">
+        <font-awesome-icon icon="arrow-left" size="lg" id="back-arrow" />
+        <h2 class="title">Crea tu producto</h2>
+      </div>
+      <div class="sidebar-body">
+        <div>
+          <h4>Diseña tu producto</h4>
+          <small>Tamaño máximo de archivo 50MB</small>
+          <div class="button-group">
+            <button v-if="!fileAdded" @click="doclickInput">
+              <font-awesome-icon icon="image" size="lg" />
+            </button>
+            <button v-else @click="deleteImage">
+              <font-awesome-icon icon="trash-alt" size="lg" />
+            </button>
+
+            <input @change="addImage" type="file" hidden ref="fileInput" />
+          </div>
+          <hr />
+          <p>
+            <b>Selecciona colores</b>
+            <br />
+            <small>Selecciona múltiples colores para ofrecer</small>
+          </p>
+          <div class="color-wrapper">
+            <div
+              @click="chooseColor(color)"
+              class="color"
+              v-for="color in colorsChosen"
+              :key="color"
+              :style="{background: color}"
+            ></div>
+            <div class="add-color" @click="showColorPicker = true">
+              <font-awesome-icon icon="plus" />
+            </div>
+          </div>
+          <hr />
+          <p>
+            <b>Define tu precio de venta</b>
+            <br />
+            <small>Este es el precio que veran los usuarios</small>
+          </p>
+          <div class="calculator">
+            <div class="input-group">
+              <span>S/</span>
+              <input id="price" type="text" name="price" v-model.number="price" />
+            </div>
+            <small v-if="profit > 0" class="profit">S/{{profit.toFixed(2)}} ganancia/venta</small>
+            <small v-else :style="{color: 'red'}">Sin ganancias</small>
+          </div>
+        </div>
+        <div>
+          <button>Continuar</button>
+        </div>
+      </div>
+    </template>
+    <div v-else class="sidebar-body">
+      <div>
+        <p>
+          <b>Selecciona los colores que quieres ofrecer</b>
+          <br />
+          <small>{{`${colorsChosen.length} color${colorsChosen.length > 1 ? 'es' : ''} seleccionado${colorsChosen.length > 1 ? 's' : ''}`}}</small>
+        </p>
+        <div class="color-wrapper">
+          <div
+            @click="addColor(color)"
+            class="color color-pick"
+            v-for="color in colors"
+            :key="color"
+            :style="{background: color}"
+          >
+            <font-awesome-icon
+              v-if="colorsChosen.some(c => c === color)"
+              icon="check"
+              :style="{color: color === '#ffffff' || color === '#d6d5d5' ? 'black' : 'white',}"
+            />
+          </div>
+        </div>
+      </div>
+      <button v-if="colorsChosen.length > 0" @click="showColorPicker = false">Terminar</button>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      fileAdded: false,
+      cost: 19.99,
+      price: 49.99,
+      colorsChosen: ["#ffffff"],
+      colors: [
+        "#ffffff",
+        "#1a1a1a",
+        "#0a1339",
+        "#3a4b98",
+        "#a02e16",
+        "#1c4522",
+        "#ef4926",
+        "#4c2a6e",
+        "#f69f28",
+        "#f18fb6",
+        "#97e04a",
+        "#5c739c",
+        "#3f3f38",
+        "#f7c3c3",
+        "#d6d5d5"
+      ],
+      showColorPicker: false
+    };
+  },
+  methods: {
+    doclickInput() {
+      this.$refs.fileInput.click();
+    },
+    addImage(e) {
+      this.$emit("imageAdded", e.target.files[0]);
+      this.fileAdded = true;
+    },
+    deleteImage() {
+      this.$emit("imageDeleted");
+    },
+    addColor(color) {
+      if (!this.colorsChosen.some(c => c === color)) {
+        return this.colorsChosen.push(color);
+      }
+      this.colorsChosen = this.colorsChosen.filter(c => c !== color);
+    },
+    chooseColor(color) {
+      this.$emit("colorChange", color);
+    }
+  },
+  computed: {
+    profit() {
+      return this.price - this.cost;
+    }
+  }
+};
+</script>
+
+<style scoped>
+.sidebar {
+  background: #212032;
+  color: white;
+  font-family: "Roboto";
+}
+
+.sidebar-header {
+  display: flex;
+  background: #0a0918;
+  height: 80px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 0 20px;
+}
+
+.sidebar-body {
+  padding: 20px;
+  font-family: "Open Sans", sans-serif;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90%;
+}
+
+#back-arrow {
+  cursor: pointer;
+}
+.title {
+  margin: 0;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  text-align: center;
+  width: 80%;
+}
+
+.button-group {
+  margin: 20px 0 20px 0;
+}
+
+.calculator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-group span {
+  font-family: "Roboto";
+  font-weight: bold;
+  font-size: 0.8em;
+  z-index: 3;
+  position: relative;
+  left: 7px;
+}
+
+#price,
+#price:focus {
+  max-width: 100px;
+  padding: 10px 10px 10px 25px;
+  font-family: "Roboto";
+  font-weight: bold;
+  color: white;
+  background: #2e2d3e;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  position: relative;
+  left: -15px;
+  z-index: 1;
+  font-size: 0.9em;
+}
+
+#price:focus {
+  outline: white 1px solid;
+}
+
+.profit {
+  color: #40f99bff;
+}
+
+button,
+button:active,
+button:focus {
+  cursor: pointer;
+  padding: 10px;
+  background: transparent;
+  border: white 1px solid;
+  color: white;
+  min-width: 100%;
+  outline: none;
+}
+
+button:hover {
+  outline: white 1px solid;
+}
+
+.color-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.color,
+.add-color {
+  width: 32px;
+  height: 32px;
+  border-radius: 100px;
+  margin: 0 10px 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-pick {
+  cursor: pointer;
+}
+
+.add-color {
+  color: #90d7ffff;
+  border: #90d7ffff 2px solid;
+  cursor: pointer;
+}
+</style>
