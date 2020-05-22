@@ -5,15 +5,11 @@
         <div class="areaSwitcher">
           <div class="productTemplateSwitcher"></div>
         </div>
-
         <div class="designArea">
           <div
             class="designBase"
             :style="{'background-color': color, width: `${baseWidth}px`, height: `${baseWidth}px`}"
           >
-            <!-- {{selectBoxHeight}}
-            <br />
-            {{selectBoxWidth}} -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -25,11 +21,11 @@
             >
               <g
                 @click="editing = true"
-                v-if="showImage"
+                v-if="image.url"
                 :style="{cursor: 'pointer'}"
-                :transform="`matrix(${(3508/imageWidth) * editInfo.scaleX} 0 0 ${(3508/imageWidth) * editInfo.scaleX} ${3508 * editInfo.transX} ${3508 * editInfo.transY})`"
+                :transform="`matrix(${(3508/image.width) * editInfo.scaleX} 0 0 ${(3508/image.width) * editInfo.scaleX} ${3508 * editInfo.transX} ${3508 * editInfo.transY})`"
               >
-                <image :href="image" ref="art" :width="imageWidth" :height="imageHeight" />
+                <image :href="image.url" ref="art" :width="image.width" :height="image.height" />
               </g>
             </svg>
             <img :src="require(`@/assets/${front ? 'front' : 'back'}.png`)" alt class="mask" />
@@ -62,7 +58,6 @@
 
 <script>
 export default {
-  props: ["color", "image", "imageWidth", "imageHeight", "showImage"],
   data() {
     return {
       editing: false,
@@ -94,7 +89,7 @@ export default {
 
       this.editInfo.scaleX = w / this.printableWidth;
       this.selectBox.w = w / this.printableWidth;
-      
+
       this.editInfo.scaleY = h / this.printableWidth;
       this.selectBox.h = h / this.printableWidth;
     },
@@ -108,21 +103,27 @@ export default {
   },
   computed: {
     ratio() {
-      return 3508 / this.imageWidth;
+      return 3508 / this.image.width;
     },
     selectBoxWidth() {
       return (
-        this.imageWidth *
+        this.image.width *
         ((this.printableWidth * this.ratio) / 3508) *
         this.selectBox.w
       );
     },
     selectBoxHeight() {
       return (
-        this.imageHeight *
+        this.image.height *
         ((this.printableWidth * this.ratio) / 3508) *
         this.selectBox.w
       );
+    },
+    image() {
+      return this.$store.state.image;
+    },
+    color() {
+      return this.$store.state.chosenColor;
     }
   },
   mounted() {

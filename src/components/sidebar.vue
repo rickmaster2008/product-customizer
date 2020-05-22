@@ -118,11 +118,22 @@ export default {
       this.$refs.fileInput.click();
     },
     addImage(e) {
-      this.$emit("imageAdded", e.target.files[0]);
       this.fileAdded = true;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const url = e.target.result;
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+          const width = image.width;
+          const height = image.height;
+          this.$store.commit("addImage", { url, width, height });
+        };
+      };
+      reader.readAsDataURL(e.target.files[0]);
     },
     deleteImage() {
-      this.$emit("imageDeleted");
+      this.$store.commit("deleteImage");
     },
     addColor(color) {
       if (!this.colorsChosen.some(c => c === color)) {
@@ -131,7 +142,7 @@ export default {
       this.colorsChosen = this.colorsChosen.filter(c => c !== color);
     },
     chooseColor(color) {
-      this.$emit("colorChange", color);
+      this.$store.commit("chooseColor", color);
     }
   },
   computed: {
