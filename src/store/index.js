@@ -12,6 +12,7 @@ export default new Vuex.Store({
     },
     chosenColor: '#ffffff',
     colors: [],
+    step: 0,
   },
   mutations: {
     addImage(state, image) {
@@ -26,6 +27,12 @@ export default new Vuex.Store({
     },
     chooseColor(state, color) {
       state.chosenColor = color
+    },
+    moveToProductInfo(state) {
+      state.step = 1;
+    },
+    moveToShirtInfo(state) {
+      state.step = 0;
     }
   },
   actions: {

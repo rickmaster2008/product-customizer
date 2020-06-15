@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <Sidebar @colorChange="changeColor" @imageAdded="addImage" @imageDeleted="deleteImage" />
+    <ShirtInfo v-if="step === 0" @colorChange="changeColor" @imageAdded="addImage" @imageDeleted="deleteImage" />
+    <ProductInfo v-else />
     <Customizer
       :color="chosenColor"
       :image="image"
@@ -12,8 +13,9 @@
 </template>
 
 <script>
-import Sidebar from "../components/sidebar";
+import ShirtInfo from "../components/shirtInfo";
 import Customizer from "../components/customizer";
+import ProductInfo from "../components/productInfo";
 export default {
   data() {
     return {
@@ -23,6 +25,11 @@ export default {
       imageHeight: 0,
       showImage: false
     };
+  },
+  computed: {
+    step() {
+      return this.$store.state.step;
+    }
   },
   methods: {
     changeColor(color) {
@@ -52,8 +59,9 @@ export default {
     }
   },
   components: {
-    Sidebar,
-    Customizer
+    ShirtInfo,
+    Customizer,
+    ProductInfo,
   }
 };
 </script>

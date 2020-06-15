@@ -53,7 +53,8 @@
           </div>
         </div>
         <div>
-          <button>Continuar</button>
+          <button @click="descargar">Descargar</button>
+          <button @click="moveToProductInfo">Continuar</button>
         </div>
       </div>
     </template>
@@ -114,6 +115,12 @@ export default {
     };
   },
   methods: {
+    descargar() {
+      console.log(this.$refs)
+    },
+    moveToProductInfo() {
+      this.$store.commit("moveToProductInfo");
+    },
     doclickInput() {
       this.$refs.fileInput.click();
     },

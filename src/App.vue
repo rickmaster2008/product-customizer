@@ -1,15 +1,18 @@
 <template>
   <div id="app">
     <Designer />
+    <ProductInfo />
   </div>
 </template>
 
 <script>
 import Designer from "./views/designer";
+import ProductInfo from "./views/productInfo";
 export default {
   name: "App",
   components: {
-    Designer
+    Designer,
+    ProductInfo,
   }
 };
 </script>
