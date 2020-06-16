@@ -1,8 +1,18 @@
 <template>
   <div class="container">
-    <ShirtInfo v-if="step === 0" @colorChange="changeColor" @imageAdded="addImage" @imageDeleted="deleteImage" />
+    <div v-if="showLoader" ref="loader" class="loader">
+      <font-awesome-icon icon="spinner" spin size="3x" :style="{color: '#212032'}" />
+    </div>
+    <ShirtInfo
+      v-if="step === 0"
+      @colorChange="changeColor"
+      @imageAdded="addImage"
+      @imageDeleted="deleteImage"
+      @download="download"
+    />
     <ProductInfo v-else />
     <Customizer
+      ref="customizer"
       :color="chosenColor"
       :image="image"
       :imageHeight="imageHeight"
@@ -19,6 +29,7 @@ import ProductInfo from "../components/productInfo";
 export default {
   data() {
     return {
+      showLoader: false,
       chosenColor: "#ffffff",
       image: "",
       imageWidth: 0,
@@ -32,6 +43,11 @@ export default {
     }
   },
   methods: {
+    async download() {
+      this.showLoader = true;
+      await this.$refs.customizer.svgToPng();
+      this.showLoader = false;
+    },
     changeColor(color) {
       this.chosenColor = color;
     },
@@ -61,12 +77,24 @@ export default {
   components: {
     ShirtInfo,
     Customizer,
-    ProductInfo,
+    ProductInfo
   }
 };
 </script>
 
 <style scoped>
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  z-index: 9999;
+}
 .container {
   display: grid;
   grid-template-columns: minmax(300px, 1fr) 3fr;

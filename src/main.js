@@ -2,10 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueDraggableResizable from 'vue-draggable-resizable'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faImage, faFont, faPlus, faCheck, faArrowLeft, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { faImage, faFont, faPlus, faCheck, faArrowLeft, faTrashAlt, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faImage, faFont, faPlus, faCheck, faArrowLeft, faTrashAlt)
+library.add(faImage, faFont, faPlus, faCheck, faArrowLeft, faTrashAlt, faSpinner)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('vue-draggable-resizable', VueDraggableResizable)

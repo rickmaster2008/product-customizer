@@ -53,7 +53,6 @@
           </div>
         </div>
         <div>
-          <button @click="descargar">Descargar</button>
           <button @click="moveToProductInfo">Continuar</button>
         </div>
       </div>
@@ -116,7 +115,7 @@ export default {
   },
   methods: {
     descargar() {
-      console.log(this.$refs)
+      this.$emit('download');
     },
     moveToProductInfo() {
       this.$store.commit("moveToProductInfo");

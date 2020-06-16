@@ -11,13 +11,13 @@
             :style="{'background-color': color, width: `${baseWidth}px`, height: `${baseWidth}px`}"
           >
             <svg
-              ref="design"
+              ref="image"
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
               viewBox="0 0 3508 4961"
               class="designSvg"
               :width="`${printableWidth}`"
-              :height="`${printableHeight}px`"
+              :height="`${printableHeight}`"
               :style="{top: `${baseWidth/3.5}px`, left: `${(baseWidth - printableWidth) / 1.93}px`}"
             >
               <g
@@ -26,7 +26,7 @@
                 :style="{cursor: 'pointer'}"
                 :transform="`matrix(${(3508/image.width) * editInfo.scaleX} 0 0 ${(3508/image.width) * editInfo.scaleX} ${3508 * editInfo.transX} ${3508 * editInfo.transY})`"
               >
-                <image :href="image.url" ref="art" :width="image.width" :height="image.height" />
+                <image :href="image.url" :width="image.width" :height="image.height" />
               </g>
             </svg>
             <img :src="require(`@/assets/${front ? 'front' : 'back'}.png`)" alt class="mask" />
@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { svg2png } from "svg-png-converter";
+import * as downloadjs from "downloadjs/download";
 export default {
   data() {
     return {
@@ -81,6 +83,19 @@ export default {
     };
   },
   methods: {
+    async svgToPng() {
+      this.$refs.image.setAttribute("width", "3508");
+      this.$refs.image.setAttribute("height", "4960");
+      const data = new XMLSerializer().serializeToString(this.$refs.image);
+      let pngImage = await svg2png({
+        input: data,
+        encoding: "dataURL",
+        format: "png"
+      });
+      downloadjs(pngImage);
+      this.$refs.image.setAttribute("width", this.printableWidth);
+      this.$refs.image.setAttribute("height", this.printableHeight);
+    },
     onResize(x, y, w, h) {
       this.editInfo.transX = x / this.printableWidth;
       this.selectBox.x = x;
